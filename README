@@ -1,0 +1,70 @@
+Anso Time
+=========
+
+A time tracking system that runs in the (google) cloud
+
+Ideas
+=====
+
+  - users can ask to be texted and text back hours via twilio if they haven't
+    submitted by a specified time
+
+  - integrate with jabber so it can gtalk you if you haven't / ...
+
+  - calculate how many hours the user is allocated for a time period so they 
+    can know how much time they can work in following periods
+
+  - audit log of when all entries are made
+
+  - csv exports
+
+  - allow users to marking time as off (useful for twilio / ...)
+
+
+Running Anso Time
+=================
+
+Anso Time was designed to run in Google AppEngine, so there are a couple
+of steps to get it running. You can download the Google AppEngine Python
+development environment at http://code.google.com/appengine/downloads.html.
+
+1. Link or copy the tornado code directory into this directory:
+
+   ln -s ../../tornado tornado
+
+   AppEngine doesn't use the Python modules installed on this machine.
+   You need to have the 'tornado' module copied or linked for AppEngine
+   to find it.
+
+3. Install and run dev_appserver
+
+   If you don't already have the App Engine SDK, download it from
+   http://code.google.com/appengine/downloads.html
+
+   To start the tornado demo, run the dev server on this directory:
+
+   dev_appserver.py .
+
+4. Visit http://localhost:8080/ in your browser
+
+   If you sign in as an administrator, you will be able to view 
+   a team report.
+
+
+If you want to deploy this app in production:
+
+1. Register a new appengine application and put its id in app.yaml
+
+   First register a new application at http://appengine.google.com/.
+   Then edit app.yaml in this directory and change the "application"
+   setting from "tornado-appenginge" to your new application id.
+
+2. Deploy to App Engine
+
+   If you registered an application id, you can now upload your app:
+
+   appcfg update .
+
+   After that, visit application_id.appspot.com, where application_id
+   is the application you registered.
+

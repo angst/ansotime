@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <table>
+    <tr>
+      <td></td>
+      {% for entry in blank_entries %}
+        <th class="date day_{{entry.weekday}} {{entry.is_today}}"><em>{{entry.is_today}}</em><br>{{entry.date.day}}<br><small>{{ entry.weekday }}</small></th>
+  	  {% end %}
+  	</tr>
+    
+    {% for username in sorted(user_list.keys()) %}
+    <tr>
+      <td>{{ username }}</td>
+      {% for blank in blank_entries %}
+        <td class="day_{{blank.weekday}} {{blank.is_today}}">
+          {{ ''.join([str(e.hours) for e in user_list[username] if e.date == blank.date]) }}
+        </td>
+      {% end %}
+    </tr>
+    {% end %}
+  </table>
+{% end %}

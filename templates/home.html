@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block body %}
+  <table>
+    <tr>
+      <td></td>
+      {% for entry in entries %}
+  	    <th class="day_{{entry.weekday}} {{entry.is_today}}"><em>{{entry.is_today}}</em><br>{{entry.date.day}}<br><small>{{ entry.weekday }}</small></th>
+  	  {% end %}
+  	</tr>
+  	<tr>
+  	  <td>Nebula &nbsp; &nbsp;</td>
+      {% for entry in entries %}
+        <td class="day_{{entry.weekday}} {{entry.is_today}}"><form method="post">
+          {{ xsrf_form_html() }}
+          <input type="hidden" name="date" value="{{entry.date}}">
+          <input type="text"name="hours" value="{{ entry.hours }}"/>
+        </form></td>
+      {% end %}
+    </tr>
+  </table>
+{% end %}
