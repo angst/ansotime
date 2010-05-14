@@ -14,21 +14,18 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import functools
 import datetime
 import time
 import os.path
-import re
 import tornado.web
 import tornado.wsgi
-import unicodedata
 import wsgiref.handlers
 
 from google.appengine.api import users
 from google.appengine.ext import db
 
 class Entry(db.Model):
-    DAYS = ['M','T','W','H','F','S','S']
+    DAYS = ('M', 'T', 'W', 'H', 'F', 'S', 'S')
     
     """A single time entry."""
     user = db.UserProperty(required=True, indexed=True)
@@ -71,8 +68,9 @@ class BaseHandler(tornado.web.RequestHandler):
             self, template_name, users=users, **kwargs)
 
 
+
 def date_range(period):
-    return [ datetime.date(2010, period, d) for d in xrange(1,16)]
+    return [ datetime.date(2010, period, d) for d in xrange(1, 16)]
 
 class HomeHandler(BaseHandler):
     def get(self):
@@ -98,7 +96,7 @@ class HomeHandler(BaseHandler):
         
     def post(self):
         entry_date = datetime.date(*[int(d) for d in self.get_argument("date").split('-')])
-        entry = Entry.all().filter("user =", users.get_current_user()).filter("date =", entry_date).get()
+        entry = Entry.all().filter("user =", self.get_current_user()).filter("date =", entry_date).get()
         hours = self.get_argument("hours", "")
         
         if hours == '' or hours == '0':
@@ -122,11 +120,11 @@ class ReportHandler(BaseHandler):
         dates = date_range(5)
         
         # load all entries for the current period
-        q = Entry.all()
-        q.filter("date >=", dates[0])
-        q.filter("date <=", dates[-1])
-        q.order("date")
-        current_entries = q.fetch(1000)
+        eq = Entry.all()
+        eq.filter("date >=", dates[0])
+        eq.filter("date <=", dates[-1])
+        eq.order("date")
+        current_entries = eq.fetch(1000)
         
         user_list = {}
         for entry in current_entries:
@@ -135,7 +133,7 @@ class ReportHandler(BaseHandler):
                 user_list[username] = []
             user_list[username].append(entry)
         
-        blank_entries = [Entry(date=d, user=self.get_current_user()) for d in dates]
+        blank_entries = [Entry(date=d, user=self.current_user) for d in dates]
         self.render("report.html", user_list=user_list, blank_entries=blank_entries)
 
 settings = {
@@ -144,13 +142,13 @@ settings = {
 }
 
 application = tornado.wsgi.WSGIApplication([
-    (r"/", HomeHandler),
-    (r"/admin", ReportHandler),
+    (r'/', HomeHandler),
+    (r'/admin', ReportHandler),
 ], **settings)
 
 
 def main():
-    os.environ["TZ"]="US/Pacific"
+    os.environ['TZ'] = 'US/Pacific'
     time.tzset()
     wsgiref.handlers.CGIHandler().run(application)
 

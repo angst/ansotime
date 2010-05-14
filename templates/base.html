@@ -13,7 +13,7 @@
             {% if current_user.administrator %}
               <a href="/admin">Admin</a> |
             {% end %}
-            {{ escape(users.get_current_user().nickname()) }}
+            {{ escape(current_user.nickname()) }}
             <a href="{{ escape(users.create_logout_url('/')) }}">Sign out</a>
         </div>
         <h1><a href="/">Anso Time</a></h1>
