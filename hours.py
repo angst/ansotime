@@ -30,7 +30,7 @@ from google.appengine.ext import db
 class Entry(db.Model):
     DAYS = ['M','T','W','H','F','S','S']
     
-    """A single blog entry."""
+    """A single time entry."""
     user = db.UserProperty(required=True, indexed=True)
     date = db.DateProperty(required=True, indexed=True)
     minutes = db.IntegerProperty()
@@ -53,25 +53,6 @@ class Entry(db.Model):
             return 'today'
         else:
             return ''
-
-
-def administrator(method):
-    """Decorate with this method to restrict to site admins."""
-    @functools.wraps(method)
-    def wrapper(self, *args, **kwargs):
-        if not self.current_user:
-            if self.request.method == "GET":
-                self.redirect(self.get_login_url())
-                return
-            raise tornado.web.HTTPError(403)
-        elif not self.current_user.administrator:
-            if self.request.method == "GET":
-                self.redirect("/")
-                return
-            raise tornado.web.HTTPError(403)
-        else:
-            return method(self, *args, **kwargs)
-    return wrapper
 
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -134,8 +115,10 @@ class HomeHandler(BaseHandler):
 
 
 class ReportHandler(BaseHandler):
-    @administrator
     def get(self):
+        if not self.current_user.administrator:
+            raise tornado.web.HTTPError(403)
+        
         dates = date_range(5)
         
         # load all entries for the current period
@@ -153,18 +136,10 @@ class ReportHandler(BaseHandler):
             user_list[username].append(entry)
         
         blank_entries = [Entry(date=d, user=self.get_current_user()) for d in dates]
-        # print user_list
         self.render("report.html", user_list=user_list, blank_entries=blank_entries)
 
-class EntryModule(tornado.web.UIModule):
-    def render(self, entry):
-        return self.render_string("modules/entry.html", entry=entry)
-
-
 settings = {
-    "blog_title": u"Tornado Blog",
     "template_path": os.path.join(os.path.dirname(__file__), "templates"),
-    "ui_modules": {"Entry": EntryModule},
     "xsrf_cookies": True,
 }
 
