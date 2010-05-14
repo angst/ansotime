@@ -35,10 +35,14 @@ class Entry(db.Model):
     
     @property
     def weekday(self):
+        """ day of the week for this entry """
+        
         return self.DAYS[self.date.weekday()]
     
     @property
     def hours(self):
+        """ number of hours for this entry """
+        
         if self.minutes and self.minutes > 0:
             return self.minutes / 60.0
         else:
@@ -46,6 +50,8 @@ class Entry(db.Model):
     
     @property
     def is_today(self):
+        """ returns a string 'today' or blank if the entry is for today """
+        
         if datetime.date.today() == self.date:
             return 'today'
         else:
@@ -69,12 +75,13 @@ class BaseHandler(tornado.web.RequestHandler):
 
 
 
-def date_range(period):
+def period_dates(period):
+    """ return a list of dates for a given time period """
     return [ datetime.date(2010, period, d) for d in xrange(1, 16)]
 
 class HomeHandler(BaseHandler):
     def get(self):
-        dates = date_range(5)
+        dates = period_dates(5)
         
         # load all entries for the current period
         q = Entry.all()
@@ -117,7 +124,7 @@ class ReportHandler(BaseHandler):
         if not self.current_user.administrator:
             raise tornado.web.HTTPError(403)
         
-        dates = date_range(5)
+        dates = period_dates(5)
         
         # load all entries for the current period
         eq = Entry.all()
