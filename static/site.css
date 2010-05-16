@@ -84,6 +84,14 @@ td input {
     text-align: center;
 }
 
+.changed input {
+    background: #ffa;
+}
+
+html .submitting input {
+    background: #fff url(spinner.gif) no-repeat center center;
+}
+
 .today {
     background: #ff0;
 }
