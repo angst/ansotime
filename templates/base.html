@@ -19,9 +19,13 @@
             $.ajax({
               type: 'POST',
               url: "/",
-              data: {'xsrf': xsrf, 'date':date, 'hours':hours}
+              data: {'_xsrf': xsrf, 'date':date, 'hours':hours},
+              success: function(res){
+                console.log(res);
+              }
             });
           };
+          
         });
       })
     </script>
